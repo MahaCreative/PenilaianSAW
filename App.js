@@ -1,20 +1,30 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from "@react-navigation/native";
+import SplashScreeen from "./src/Pages/SplashScreeen";
+import { RecoilRoot, useRecoilState } from "recoil";
+import Login from "./src/Pages/Login";
+import Dashboard from "./src/Pages/Dashboard";
+import Drawer from "./src/Pages/Drawer";
 
+import axios from "axios";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
+const Stack = createNativeStackNavigator();
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <RecoilRoot>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Splashscreen" component={SplashScreeen} />
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen
+            name="Drawer"
+            component={Drawer}
+            options={{
+              headerShown: false,
+            }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </RecoilRoot>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
