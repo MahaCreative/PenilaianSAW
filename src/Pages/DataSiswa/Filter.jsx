@@ -31,7 +31,9 @@ export default function Filter({ setParams, open, setOpen, params }) {
   }, []);
   return (
     <Dialog visible={open} onDismiss={setOpen}>
-      <Dialog.Title>Filter Data Siswa</Dialog.Title>
+      <Dialog.Title className="text-sm font-semibold text-orange-500">
+        Filter Data Siswa
+      </Dialog.Title>
       <Dialog.Content>
         <View className="flex gap-y-3">
           <Picker

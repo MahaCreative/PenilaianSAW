@@ -131,7 +131,7 @@ export default function DataKelas({ navigation }) {
                 Total Siswa: {item.siswa_count} Siswa
               </Text>
               <Text className="font-light text-xs">
-                Jumlah Perempuan: {item.laki_laki} Siswa
+                Jumlah Laki-laki: {item.laki_laki} Siswa
               </Text>
               <Text className="font-light text-xs">
                 Jumlah Perempuan: {item.perempuan} Siswa

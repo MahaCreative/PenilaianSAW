@@ -9,6 +9,11 @@ import axios from "axios";
 import { GlobalUrl } from "../Config/GlobalVar";
 import DataKelas from "./DataKelas/DataKelas";
 import DataSiswa from "./DataSiswa/DataSiswa";
+import Kriteria from "./Kriteria/Kriteria";
+import Periode from "./Periode/Periode";
+import PenilaianKepseek from "./PenilaianKepsek/PenilaianKepseek";
+import Tabs from "../Components/Tabs/PenilaianKepsek/Tabs";
+import TabsKepsek from "../Components/Tabs/PenilaianKepsek/Tabs";
 const DrawerScreen = createDrawerNavigator();
 
 export default function Drawer({ navigation }) {
@@ -41,6 +46,15 @@ export default function Drawer({ navigation }) {
       <DrawerScreen.Screen name="Data Guru" component={Index} />
       <DrawerScreen.Screen name="Data Kelas" component={DataKelas} />
       <DrawerScreen.Screen name="Data Siswa" component={DataSiswa} />
+      <DrawerScreen.Screen
+        name="Data Kriteria Penilaian"
+        component={Kriteria}
+      />
+      <DrawerScreen.Screen name="Periode Penilaian" component={Periode} />
+      <DrawerScreen.Screen
+        name="Penilaian Kepsek"
+        component={TabsKepsek}
+      ></DrawerScreen.Screen>
     </DrawerScreen.Navigator>
   );
 }
