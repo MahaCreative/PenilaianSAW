@@ -53,7 +53,7 @@ export default function DataSiswa({ navigation }) {
       );
       setTimeout(() => {
         setLoading(false);
-      }, 1000);
+      }, 100);
       setDataSiswa(response.data.siswa);
       setCount(response.data.count);
     } catch (err) {

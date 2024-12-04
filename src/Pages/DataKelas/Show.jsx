@@ -61,7 +61,7 @@ export default function Show({ kode_kelas, open, setOpen, refresh }) {
       );
       setTimeout(() => {
         setData(response.data);
-      }, 300);
+      }, 100);
       setLoading(false);
     } catch (err) {
       Alert.alert(

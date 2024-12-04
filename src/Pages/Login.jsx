@@ -48,11 +48,11 @@ export default function Login({ navigation }) {
 
       setTimeout(() => {
         setDialog(false);
-      }, 3000);
+      }, 100);
     }
     setTimeout(() => {
       setLoading(false);
-    }, 500);
+    }, 100);
   };
 
   return (

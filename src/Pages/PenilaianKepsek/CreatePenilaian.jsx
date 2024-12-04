@@ -9,7 +9,13 @@ import { tokenUser } from "../../Store/Auth";
 import Octicons from "@expo/vector-icons/Octicons";
 import { RatingInput } from "react-native-stock-star-rating";
 import Buttons from "../../Components/Buttons";
-export default function CreatePenilaian({ open, setOpen, guru, penilaian_id }) {
+export default function CreatePenilaian({
+  open,
+  setOpen,
+  guru,
+  fetchGuru,
+  penilaian_id,
+}) {
   const useToken = useRecoilValue(tokenUser);
   const [kriteria, setKriteria] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -55,6 +61,8 @@ export default function CreatePenilaian({ open, setOpen, guru, penilaian_id }) {
   });
 
   const submitHandler = async () => {
+    console.log(data);
+
     if (data.id_kriteria.length === data.nilai.length) {
       try {
         const response = await axios.post(
@@ -66,9 +74,17 @@ export default function CreatePenilaian({ open, setOpen, guru, penilaian_id }) {
             },
           }
         );
+        Alert.alert(
+          "Success",
+          "Penilaian guru berhasil dikirim, silahkan memberikan penilaian lagi"
+        );
         console.log(response.data);
-        console.log(response);
+
+        fetchGuru();
+        setOpen();
       } catch (err) {
+        console.log(err.response.data);
+
         setErrors(err.response.data.errors);
       }
     } else {
@@ -78,9 +94,9 @@ export default function CreatePenilaian({ open, setOpen, guru, penilaian_id }) {
       );
     }
   };
-  console.log(errors);
+
   return (
-    <Dialog visible={open} onDismiss={setOpen} className="h-[80%] ">
+    <Dialog visible={open} onDismiss={setOpen} className="h-[70%] ">
       <Dialog.Title className="text-xs text-orange-500 font-bold">{`Nilai Kinerja ${guru?.nama}`}</Dialog.Title>
       <Dialog.ScrollArea>
         {loading ? (
@@ -91,7 +107,7 @@ export default function CreatePenilaian({ open, setOpen, guru, penilaian_id }) {
             </Text>
           </View>
         ) : (
-          <ScrollView>
+          <ScrollView className="max-h-[100%]">
             {kriteria.length > 0 ? (
               kriteria.map((item, key) => (
                 <View

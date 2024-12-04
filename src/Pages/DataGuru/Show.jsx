@@ -32,7 +32,7 @@ export default function Show({ open, setOpen, nip, refresh }) {
     }
     setTimeout(() => {
       setLoad(false);
-    }, 1000);
+    }, 100);
   };
   useEffect(() => {
     fetchData();

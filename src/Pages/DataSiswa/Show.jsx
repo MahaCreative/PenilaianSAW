@@ -34,7 +34,7 @@ export default function Show({ open, setOpen, nis, refresh }) {
 
       setTimeout(() => {
         setLoad(false);
-      }, 1000);
+      }, 100);
     } catch (err) {
       console.log(err);
 

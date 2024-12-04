@@ -35,7 +35,7 @@ export default function Kriteria({ navigation }) {
       setCount(response.data.count);
       setTimeout(() => {
         setLoading(false);
-      }, 3000);
+      }, 100);
     } catch (err) {
       Alert.alert(
         "Error: " + err,

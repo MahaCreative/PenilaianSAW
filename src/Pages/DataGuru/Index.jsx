@@ -47,7 +47,7 @@ export default function Index({ navigation }) {
     }
     setTimeout(() => {
       setLoading(false);
-    }, 1000);
+    }, 100);
   };
   const reload = useCallback(debounce((quer) => getDataGuru(quer), 1000));
   useEffect(() => {

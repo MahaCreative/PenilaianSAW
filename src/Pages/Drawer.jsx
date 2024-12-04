@@ -33,7 +33,7 @@ export default function Drawer({ navigation }) {
       alert("Anda telah Logout dari sistem silahkan login ulang " + err);
       setTimeout(() => {
         navigation.replace("Login");
-      }, 1500);
+      }, 100);
     }
   };
 

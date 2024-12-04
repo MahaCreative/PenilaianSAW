@@ -8,6 +8,7 @@ import { GlobalUrl } from "../../Config/GlobalVar";
 import { ActivityIndicator } from "react-native-paper";
 import Octicons from "@expo/vector-icons/Octicons";
 import Buttons from "../../Components/Buttons";
+import FormCreate from "./Create";
 
 export default function Periode({ navigation }) {
   const [data, setData] = useState([]);
@@ -15,6 +16,7 @@ export default function Periode({ navigation }) {
   const [tahun, setTahun] = useState(2024);
   const [loading, setLoading] = useState(false);
   const useToken = useRecoilValue(tokenUser);
+  const [modalCreate, setModalCreate] = useState(false);
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -23,12 +25,12 @@ export default function Periode({ navigation }) {
           Authorization: `Bearer ${useToken}`,
         },
       });
-      setTahun(response.data.tahun);
+      setTahun(response.data.tahun_ini);
       setData(response.data.periode);
       setCount(response.data.count);
       setTimeout(() => {
         setLoading(false);
-      }, 3000);
+      }, 100);
     } catch (err) {
       Alert.alert(
         "Error ",
@@ -83,6 +85,8 @@ export default function Periode({ navigation }) {
   useEffect(() => {
     fetchData();
   }, []);
+  console.log(useToken);
+
   return (
     <View className="py-3 px-3">
       <View className="py-1 px-2  bg-slate-200 rounded-md">
@@ -96,33 +100,41 @@ export default function Periode({ navigation }) {
         <View className="flex flex-row  py-1 gap-x-1 items-center justify-between w-full  ">
           <View className="bg-pink-500 rounded-md py-3 px-2 text-white w-1/2 flex justify-between flex-row items-center">
             <View className="flex items-center">
-              <MaterialIcons name="face-3" size={42} color="white" />
+              <MaterialIcons name="date" size={42} color="white" />
               <Text className="text-xs text-white font-light">
                 Total Periode
               </Text>
             </View>
             <View className="flex flex-col items-end justify-between">
               <Text className="text-4xl font-bold text-white">
-                {/* {count?.perempuan} */}
+                {count?.total}
               </Text>
               <Text className="text-xs text-white font-light">Ditambahkan</Text>
             </View>
           </View>
           <View className="bg-blue-500 rounded-md py-3 px-2 text-white w-1/2 flex justify-between flex-row items-center">
             <View className="flex items-center">
-              <MaterialIcons name="face" size={42} color="white" />
+              <MaterialIcons name="calender" size={42} color="white" />
               <Text className="text-xs text-white font-light">
                 Periode {tahun}
               </Text>
             </View>
             <View className="flex flex-col items-end justify-between">
               <Text className="text-4xl font-bold text-white">
-                {/* {count?.laki} */}
+                {count?.tahun}
               </Text>
               <Text className="text-xs text-white font-light">Laki-Laki</Text>
             </View>
           </View>
         </View>
+      </View>
+      <View>
+        <TouchableOpacity
+          onPress={() => setModalCreate(true)}
+          className="rounded-md py-2 px-3 bg-orange-500 items-center flex justify-center "
+        >
+          <Text className="text-white font-bold">Tambah Periode</Text>
+        </TouchableOpacity>
       </View>
       {/* Data */}
       {loading ? (
@@ -152,28 +164,39 @@ export default function Periode({ navigation }) {
               </View>
               <ScrollView
                 horizontal={true}
-                className="overflow-x-auto flex  flex-row gap-x-1 flex-wrap"
+                className="overflow-x-auto flex  flex-row flex-wrap"
               >
                 <Buttons
                   name={"Delete"}
-                  className={"bg-red-500"}
+                  className={"bg-red-500 mx-1"}
                   onPress={() => deleteHandler(item.id)}
                 />
                 <Buttons
-                  name={"Lihat hasil penilaian"}
-                  className={"bg-blue-500"}
-                  onPress={() => deleteHandler(item.id)}
+                  name={"Lihat Penilaian Kepsek"}
+                  className={"bg-blue-500  mx-1"}
+                  onPress={() =>
+                    navigation.navigate("History Penilaian Kepsek", {
+                      periodeId: item.id,
+                    })
+                  }
+                />
+                <Buttons
+                  name={"Lihat Penilaian Siswa"}
+                  className={"bg-blue-500  mx-1"}
+                  onPress={() =>
+                    navigation.navigate("History Penilaian Kepsek", {
+                      periodeId: item.id,
+                    })
+                  }
                 />
                 {item.status == "berlangsung" && (
-                  <Buttons
-                    name={"Buat Penilaian Guru"}
-                    className={"bg-green-500"}
-                    onPress={() =>
-                      navigation.navigate("Penilaian Kepsek", {
-                        periodeId: item.id,
-                      })
-                    }
-                  />
+                  <>
+                    <Buttons
+                      name={"Selesaikan Penilaian Guru"}
+                      className={"bg-red-500  mx-1"}
+                      onPress={() => console.log("proses")}
+                    />
+                  </>
                 )}
               </ScrollView>
             </View>
@@ -190,6 +213,11 @@ export default function Periode({ navigation }) {
           </Text>
         </TouchableOpacity>
       )}
+      <FormCreate
+        fetchPeriode={() => fetchData()}
+        open={modalCreate}
+        setOpen={() => setModalCreate(false)}
+      />
     </View>
   );
 }

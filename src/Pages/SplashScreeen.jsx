@@ -16,7 +16,7 @@ export default function SplashScreeen({ navigation }) {
         } else {
           setTimeout(() => {
             navigation.replace("Login"); // Jika error, arahkan ke Login
-          }, 3000);
+          }, 100);
         }
       } catch (err) {
         navigation.replace("Login"); // Jika error, arahkan ke Login
