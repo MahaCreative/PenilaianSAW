@@ -13,15 +13,18 @@ import { ActivityIndicator } from "react-native-paper";
 import Octicons from "@expo/vector-icons/Octicons";
 import { debounce } from "lodash";
 import axios from "axios";
-import { GlobalUrl } from "../../Config/GlobalVar";
+
 import { useRecoilValue } from "recoil";
-import { tokenUser } from "../../Store/Auth";
+
 import moment from "moment";
-import CreatePenilaian from "./CreatePenilaian";
-import Buttons from "../../Components/Buttons";
+// import CreatePenilaian from "./CreatePenilaian";
+
 import { Picker } from "@react-native-picker/picker";
 import { RatingInput } from "react-native-stock-star-rating";
-export default function PenilaianKepseek({ route, navigation }) {
+import { GlobalUrl } from "../../../Config/GlobalVar";
+import { tokenUser } from "../../../Store/Auth";
+import CreatePenilaian from "./CreatePenilaian";
+export default function Index({ route, navigation }) {
   const [guru, setGuru] = useState([]);
   const [periode, setPeriode] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -40,6 +43,12 @@ export default function PenilaianKepseek({ route, navigation }) {
       });
 
       setDataPeriode(response.data.periode);
+      if (response.data.periode.length == 0) {
+        Alert.alert(
+          "Errors",
+          "Anda belum bisa melakukan penilaian guru, data periode mungkin belum ditambahkan"
+        );
+      }
       setParams({ ...params, periode_id: response.data.periode[0].id });
     } catch (err) {}
   };
@@ -49,7 +58,7 @@ export default function PenilaianKepseek({ route, navigation }) {
     try {
       const response = await axios.get(
         GlobalUrl +
-          `/api/get-guru-belum-dinilai/${query.periode_id}?cari=` +
+          `/api/create-penilaian-siswa/${query.periode_id}?cari=` +
           query,
         {
           headers: {
@@ -101,26 +110,6 @@ export default function PenilaianKepseek({ route, navigation }) {
     setModalCreate(true);
   };
 
-  const prosesPenilaian = async () => {
-    try {
-      const response = await axios.post(
-        GlobalUrl + `/api/proses-penilaian-kepsek/${params.periode_id}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${useToken}`,
-          },
-        }
-      );
-      Alert.alert("Success", "Berhasil melakukan proses penilaian guru");
-    } catch (err) {
-      Alert.alert(
-        "Error",
-        "Gagal melakukan proses penilaian guru, silahkan lakukan beberapa saat nanti Error Code" +
-          err
-      );
-    }
-  };
   return (
     <SafeAreaView className="px-2">
       <View className="bg-green-500 rounded-md p-1 px-2 text-white flex justify-between flex-row items-center">
@@ -179,11 +168,6 @@ export default function PenilaianKepseek({ route, navigation }) {
         </View>
       </View>
       <View className="">
-        <Buttons
-          onPress={() => prosesPenilaian()}
-          className={"bg-green-500"}
-          name={"Proses Penilaian"}
-        />
         <Picker
           onValueChange={(itemValue, itemIndex) =>
             setParams({ ...params, periode_id: itemValue })
@@ -214,7 +198,7 @@ export default function PenilaianKepseek({ route, navigation }) {
           <Text>Loading Data</Text>
         </TouchableOpacity>
       ) : (
-        <ScrollView className=" w-full min-h-[200px] max-h-[340px] overflow-y-auto">
+        <ScrollView className=" w-full min-h-[200px] max-h-[500px] overflow-y-auto">
           {guru?.length > 0 ? (
             <>
               {guru.map((item, key) => (
@@ -241,7 +225,7 @@ export default function PenilaianKepseek({ route, navigation }) {
             </>
           ) : (
             <TouchableOpacity
-              onPress={() => reload(params)}
+              onPress={() => fetchData()}
               className="w-full h-[350px]  flex items-center justify-center"
             >
               <Octicons name="list-ordered" size={92} color="orange" />
@@ -261,7 +245,7 @@ export default function PenilaianKepseek({ route, navigation }) {
           }}
           fetchGuru={() => reload(params)}
           guru={model}
-          penilaian_id={periode.id}
+          penilaian_id={params.periode_id}
         />
       )}
     </SafeAreaView>

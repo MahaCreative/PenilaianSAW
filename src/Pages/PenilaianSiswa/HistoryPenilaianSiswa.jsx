@@ -1,7 +1,14 @@
 import axios from "axios";
 import React, { useCallback, useEffect, useState } from "react";
 import { Alert, View } from "react-native";
-import { ActivityIndicator, Text } from "react-native-paper";
+import {
+  ActivityIndicator,
+  Dialog,
+  FAB,
+  PaperProvider,
+  Portal,
+  Text,
+} from "react-native-paper";
 import { GlobalUrl } from "../../Config/GlobalVar";
 import { useRecoilValue } from "recoil";
 import { tokenUser } from "../../Store/Auth";
@@ -11,10 +18,17 @@ import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { Rating } from "react-native-stock-star-rating";
 import Octicons from "@expo/vector-icons/Octicons";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-export default function HistoryPenilaianKepsek() {
+import Buttons from "../../Components/Buttons";
+export default function HistoryPenilaianSiswa() {
   const useToken = useRecoilValue(tokenUser);
+  const [open, setOpen] = useState(false);
+  const [params, setParams] = useState({
+    periode_id: "",
+    nama_siswa: "",
+    nama_guru: "",
+  });
   const [getRank, setRank] = useState([]);
-  const [params, setParams] = useState({ periode_id: "" });
+
   const [dataPeriode, setDataPeriode] = useState([]);
   const [loading, setLoading] = useState(false);
   const [dataHistory, setDataHistory] = useState([]);
@@ -28,16 +42,15 @@ export default function HistoryPenilaianKepsek() {
 
       setDataPeriode(response.data.periode);
       setParams({ ...params, periode_id: response.data.periode[0].id });
-    } catch (err) {
-      console.log(err.response);
-    }
+    } catch (err) {}
   };
   const fetchHistory = async (query) => {
     setLoading(true);
 
     try {
       const response = await axios.get(
-        GlobalUrl + `/api/history-penilaian-kepsek/${query.periode_id}`,
+        GlobalUrl +
+          `/api/kepsek/history-penilaian-siswa/${query.periode_id}?nama_siswa=${query.nama_siswa}&nama_guru=${query.nama_guru}`,
         {
           headers: {
             Authorization: `Bearer ${useToken}`,
@@ -46,9 +59,19 @@ export default function HistoryPenilaianKepsek() {
       );
       setDataHistory(response.data);
     } catch (err) {
-      Alert.alert(
-        "Gagal mendapatkan data history penilaian kepsek Error Code: " + err
-      );
+      if (err.response.data.errors?.message) {
+        Alert.alert(
+          "Errors",
+          "Data history penilaian siswa tidak ditemukan, mugkin elum ada siswa yang melakukan penilaian" +
+            err
+        );
+      } else {
+        Alert.alert(
+          "Errors",
+          "Gagal mendapatkan data history penilaian siswa Error Code: " + err
+        );
+      }
+      setDataHistory([]);
     }
 
     setLoading(false);
@@ -75,10 +98,25 @@ export default function HistoryPenilaianKepsek() {
       setRank(arr);
     }
   }, [params]);
-  console.log(getRank);
+  const prosesPenilaian = async (id) => {
+    try {
+      const response = await axios.post(
+        GlobalUrl + `/api/proses-penilaian-siswa/${params.periode_id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${useToken}`,
+          },
+        }
+      );
+      Alert.alert("Success", "Berhasil memproses penilaian siswa");
+    } catch (err) {
+      Alert.alert("Error", "Gagal memproses penilaian. Error Code: " + err);
+    }
+  };
 
   return (
-    <View>
+    <View className="relative">
       <Picker
         onValueChange={(itemValue, itemIndex) =>
           setParams({ ...params, periode_id: itemValue })
@@ -96,6 +134,7 @@ export default function HistoryPenilaianKepsek() {
             />
           ))}
       </Picker>
+
       {loading ? (
         <TouchableOpacity
           onPress={() => reload(params)}
@@ -106,70 +145,80 @@ export default function HistoryPenilaianKepsek() {
         </TouchableOpacity>
       ) : (
         <View>
-          <View className="w-full px-1 py-1">
-            <View className="w-full bg-green-500 rounded-md py-2 px-1 text-white s flex justify-between flex-row items-end">
-              <View className="flex items-center">
-                <FontAwesome6 name="ranking-star" size={40} color="white" />
-                <Text className="text-xs text-white font-light">
-                  Rangking 1
-                </Text>
-              </View>
-              <View className="flex flex-col items-end justify-between">
-                <Text className="text-xs text-white font-light">
-                  {getRank[0]?.rangking_1 == null
-                    ? "Penilaian Belum Diproses"
-                    : getRank[0]?.rangking_1}
-                </Text>
-              </View>
-            </View>
-            <View className="flex flex-row  py-1 gap-x-1 items-center justify-between w-full  ">
-              <View className="bg-pink-500 rounded-md py-1 px-1 text-white w-1/2 ">
+          <View className="w-full px-1">
+            <View className="w-full px-1 py-1">
+              <View className="w-full bg-green-500 rounded-md py-1 px-1 text-white  flex justify-between flex-row items-end">
                 <View className="flex items-center">
-                  <FontAwesome6 name="ranking-star" size={32} color="white" />
+                  <FontAwesome6 name="ranking-star" size={40} color="white" />
                   <Text className="text-xs text-white font-light">
-                    Rangking 2
+                    Rangking 1
                   </Text>
+                </View>
+                <View className="flex flex-col items-end justify-between">
                   <Text className="text-xs text-white font-light">
-                    <Text className="text-xs text-white font-light">
-                      {getRank[0]?.rangking_2 == null
-                        ? "Penilaian Belum Diproses"
-                        : getRank[0]?.rangking_2}
-                    </Text>
+                    {getRank[0]?.rangking_1 == null
+                      ? "Penilaian Belum Diproses"
+                      : getRank[0]?.rangking_1}
                   </Text>
                 </View>
               </View>
-              <View className="bg-blue-500 rounded-md py-1 px-1 text-white w-1/2 ">
-                <View className="flex items-center">
-                  <FontAwesome6 name="ranking-star" size={32} color="white" />
-                  <Text className="text-xs text-white font-light">
-                    Rangking 3
-                  </Text>
-                  <Text className="text-xs text-white font-light">
+              <View className="flex flex-row  py-1 gap-x-1 items-center justify-between w-full  ">
+                <View className="bg-pink-500 rounded-md py-3 px-2 text-white w-1/2 ">
+                  <View className="flex items-center">
+                    <FontAwesome6 name="ranking-star" size={32} color="white" />
                     <Text className="text-xs text-white font-light">
-                      {getRank[0]?.rangking_3 == null
-                        ? "Penilaian Belum Diproses"
-                        : getRank[0]?.rangking_3}
+                      Rangking 2
                     </Text>
-                  </Text>
+                    <Text className="text-xs text-white font-light">
+                      <Text className="text-xs text-white font-light">
+                        {getRank[0]?.rangking_2 == null
+                          ? "Penilaian Belum Diproses"
+                          : getRank[0]?.rangking_2}
+                      </Text>
+                    </Text>
+                  </View>
+                </View>
+                <View className="bg-blue-500 rounded-md py-3 px-2 text-white w-1/2 ">
+                  <View className="flex items-center">
+                    <FontAwesome6 name="ranking-star" size={32} color="white" />
+                    <Text className="text-xs text-white font-light">
+                      Rangking 3
+                    </Text>
+                    <Text className="text-xs text-white font-light">
+                      <Text className="text-xs text-white font-light">
+                        {getRank[0]?.rangking_3 == null
+                          ? "Penilaian Belum Diproses"
+                          : getRank[0]?.rangking_3}
+                      </Text>
+                    </Text>
+                  </View>
                 </View>
               </View>
             </View>
+            <Buttons
+              onPress={prosesPenilaian}
+              name={"Proses Penilaian"}
+              className={"bg-green-500"}
+            />
           </View>
           <ScrollView className=" w-full min-h-[200px] max-h-[400px] overflow-y-auto px-3">
             {dataHistory?.length > 0 ? (
               <>
                 {dataHistory.map((item, key) => (
                   <View key={key} className="bg-gray-300/50 py-2 px-2 my-1">
-                    <Text className="text-xs text-orange-500 font-medium">{`Penilaian Periode ${item.penilaian_kepesek.periode.bulan}-${item.penilaian_kepesek.periode.tahun}`}</Text>
+                    <Text className="text-xs text-orange-500 font-medium">{`Penilaian Periode ${item.penilaian_siswa.periode.bulan}-${item.penilaian_siswa.periode.tahun}`}</Text>
+                    <Text className="text-xs font-medium">{`Siswa Menilai : ${item.user.name}`}</Text>
                     <Text className="text-xs font-medium">{`Guru : ${item.guru.nama} NIP : ${item.guru.nip} `}</Text>
                     <Text className="text-xs font-medium">{`Kriteria : ${item.kriteria.nama_kriteria} `}</Text>
-                    <Text className="text-xs font-medium">{`Bobot : ${item.kriteria.bobot_kriteria}%  `}</Text>
-                    <Rating
-                      stars={item.nilai}
-                      bordered={false}
-                      size={25}
-                      color="orange"
-                    />
+                    <View className="flex flex-row items-center">
+                      <Text className="text-xs font-medium">{`Bobot : ${item.kriteria.bobot_kriteria}%  `}</Text>
+                      <Rating
+                        stars={item.nilai}
+                        bordered={false}
+                        size={25}
+                        color="orange"
+                      />
+                    </View>
                   </View>
                 ))}
               </>

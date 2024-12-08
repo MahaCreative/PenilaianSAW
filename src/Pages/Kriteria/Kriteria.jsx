@@ -164,7 +164,7 @@ export default function Kriteria({ navigation }) {
           <Text>Loading Data</Text>
         </TouchableOpacity>
       ) : (
-        <ScrollView className="px-3">
+        <ScrollView className="px-3 max-h-[60%]">
           {data?.length > 0 ? (
             data.map((item, key) => (
               <View

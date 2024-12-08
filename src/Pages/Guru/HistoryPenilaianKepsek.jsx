@@ -13,7 +13,6 @@ import Octicons from "@expo/vector-icons/Octicons";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 export default function HistoryPenilaianKepsek() {
   const useToken = useRecoilValue(tokenUser);
-  const [getRank, setRank] = useState([]);
   const [params, setParams] = useState({ periode_id: "" });
   const [dataPeriode, setDataPeriode] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -37,7 +36,7 @@ export default function HistoryPenilaianKepsek() {
 
     try {
       const response = await axios.get(
-        GlobalUrl + `/api/history-penilaian-kepsek/${query.periode_id}`,
+        GlobalUrl + `/api/guru/history-penilaian-kepsek/${query.periode_id}`,
         {
           headers: {
             Authorization: `Bearer ${useToken}`,
@@ -47,6 +46,7 @@ export default function HistoryPenilaianKepsek() {
       setDataHistory(response.data);
     } catch (err) {
       Alert.alert(
+        "Error",
         "Gagal mendapatkan data history penilaian kepsek Error Code: " + err
       );
     }
@@ -60,22 +60,9 @@ export default function HistoryPenilaianKepsek() {
   useEffect(() => {
     if (params.periode_id !== "") {
       reload(params);
-      const selectedData = dataPeriode.find(
-        (item) => item.id === params.periode_id
-      );
-      const arr = [];
-      arr.push({
-        rangking_1: selectedData.rangking_1,
-        skor_1: selectedData.skor_1,
-        rangking_2: selectedData.rangking_2,
-        skor_2: selectedData.skor_2,
-        rangking_3: selectedData.rangking_3,
-        skor_3: selectedData.skor_3,
-      });
-      setRank(arr);
     }
   }, [params]);
-  console.log(getRank);
+  console.log(useToken);
 
   return (
     <View>
@@ -106,8 +93,8 @@ export default function HistoryPenilaianKepsek() {
         </TouchableOpacity>
       ) : (
         <View>
-          <View className="w-full px-1 py-1">
-            <View className="w-full bg-green-500 rounded-md py-2 px-1 text-white s flex justify-between flex-row items-end">
+          <View className="w-full px-2 py-3">
+            <View className="w-full bg-green-500 rounded-md py-2 px-2 text-white s flex justify-between flex-row items-end">
               <View className="flex items-center">
                 <FontAwesome6 name="ranking-star" size={40} color="white" />
                 <Text className="text-xs text-white font-light">
@@ -115,41 +102,38 @@ export default function HistoryPenilaianKepsek() {
                 </Text>
               </View>
               <View className="flex flex-col items-end justify-between">
+                <Text className="text-4xl font-bold text-white">NIP</Text>
                 <Text className="text-xs text-white font-light">
-                  {getRank[0]?.rangking_1 == null
+                  {dataHistory[0]?.penilaian_kepesek.rangking_1 == null
                     ? "Penilaian Belum Diproses"
-                    : getRank[0]?.rangking_1}
+                    : dataHistory[0]?.penilaian_kepesek.rangking_1}
                 </Text>
               </View>
             </View>
             <View className="flex flex-row  py-1 gap-x-1 items-center justify-between w-full  ">
-              <View className="bg-pink-500 rounded-md py-1 px-1 text-white w-1/2 ">
+              <View className="bg-pink-500 rounded-md py-3 px-2 text-white w-1/2 ">
                 <View className="flex items-center">
                   <FontAwesome6 name="ranking-star" size={32} color="white" />
                   <Text className="text-xs text-white font-light">
                     Rangking 2
                   </Text>
                   <Text className="text-xs text-white font-light">
-                    <Text className="text-xs text-white font-light">
-                      {getRank[0]?.rangking_2 == null
-                        ? "Penilaian Belum Diproses"
-                        : getRank[0]?.rangking_2}
-                    </Text>
+                    {dataHistory[0]?.penilaian_kepesek.rangking_2 == null
+                      ? "Penilaian Belum Diproses"
+                      : dataHistory[0]?.penilaian_kepesek.rangking_2}
                   </Text>
                 </View>
               </View>
-              <View className="bg-blue-500 rounded-md py-1 px-1 text-white w-1/2 ">
+              <View className="bg-blue-500 rounded-md py-3 px-2 text-white w-1/2 ">
                 <View className="flex items-center">
                   <FontAwesome6 name="ranking-star" size={32} color="white" />
                   <Text className="text-xs text-white font-light">
                     Rangking 3
                   </Text>
                   <Text className="text-xs text-white font-light">
-                    <Text className="text-xs text-white font-light">
-                      {getRank[0]?.rangking_3 == null
-                        ? "Penilaian Belum Diproses"
-                        : getRank[0]?.rangking_3}
-                    </Text>
+                    {dataHistory[0]?.penilaian_kepesek.rangking_3 == null
+                      ? "Penilaian Belum Diproses"
+                      : dataHistory[0]?.penilaian_kepesek.rangking_3}
                   </Text>
                 </View>
               </View>

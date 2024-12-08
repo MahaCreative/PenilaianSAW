@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import {
   ActivityIndicator,
   Button,
@@ -56,7 +62,7 @@ export default function Login({ navigation }) {
   };
 
   return (
-    <View className="bg-orange-500 relative w-full h-full flex flex-col justify-center items-center">
+    <SafeAreaView className="bg-orange-500 relative w-full h-full flex flex-col justify-center items-center">
       <View className="bg-white px-3 py-16 relative  w-[80%] h-[400px] rounded-md shadow-md shadow-gray-500/60 mx-2">
         <View className="absolute w-full -top-10 h-[80px] flex justify-center items-center">
           <View className="bg-orange-500 p-3 rounded-full">
@@ -131,6 +137,6 @@ export default function Login({ navigation }) {
           <Button onPress={() => setDialog(false)}>Close </Button>
         </Dialog.Actions>
       </Dialog>
-    </View>
+    </SafeAreaView>
   );
 }

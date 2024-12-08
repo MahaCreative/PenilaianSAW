@@ -3,18 +3,19 @@ import React, { useEffect, useState } from "react";
 import { Alert, Text, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { ActivityIndicator, Dialog } from "react-native-paper";
-import { GlobalUrl } from "../../Config/GlobalVar";
+import { GlobalUrl } from "../../../Config/GlobalVar";
 import { useRecoilValue } from "recoil";
-import { tokenUser } from "../../Store/Auth";
+import { tokenUser } from "../../../Store/Auth";
 import Octicons from "@expo/vector-icons/Octicons";
 import { RatingInput } from "react-native-stock-star-rating";
-import Buttons from "../../Components/Buttons";
+import Buttons from "../../../Components/Buttons";
 export default function CreatePenilaian({
   open,
   setOpen,
   guru,
   fetchGuru,
   penilaian_id,
+  params,
 }) {
   const useToken = useRecoilValue(tokenUser);
   const [kriteria, setKriteria] = useState([]);
@@ -25,7 +26,7 @@ export default function CreatePenilaian({
 
     try {
       const response = await axios.get(
-        GlobalUrl + "/api/get-data-kriteria?search=kepsek",
+        GlobalUrl + "/api/get-data-kriteria?search=siswa",
         {
           headers: {
             Authorization: `Bearer ${useToken}`,
@@ -33,7 +34,7 @@ export default function CreatePenilaian({
         }
       );
       setKriteria(response.data.kriteria);
-      console.log(response.data.kriteria.length);
+
       let arr = [];
       let id = [];
       for (let i = 0; i < response.data.kriteria.length; i++) {
@@ -59,14 +60,15 @@ export default function CreatePenilaian({
     nilai: [],
     guru_id: guru?.id,
   });
+  console.log(penilaian_id);
 
   const submitHandler = async () => {
-    console.log(data);
+    console.log(GlobalUrl + "/api/store-data-nilai-siswa/" + penilaian_id);
 
     if (data.id_kriteria.length === data.nilai.length) {
       try {
         const response = await axios.post(
-          GlobalUrl + "/api/create-data-nilai-kepsek/" + penilaian_id,
+          GlobalUrl + "/api/store-data-nilai-siswa/" + penilaian_id,
           data,
           {
             headers: {
@@ -78,14 +80,18 @@ export default function CreatePenilaian({
           "Success",
           "Penilaian guru berhasil dikirim, silahkan memberikan penilaian lagi"
         );
-        console.log(response.data);
+        console.log("++++++++++++++++++");
 
         fetchGuru();
         setOpen();
       } catch (err) {
-        console.log(err.response.data);
+        // console.log("================================+");
 
-        setErrors(err.response.data.errors);
+        // console.log(err.response.data);
+        Alert.alert("Error", "Gagal mengirim penilaian Error Code: " + err);
+        if (err.response.data.errors) {
+          setErrors(err.response.data.errors);
+        }
       }
     } else {
       Alert.alert(

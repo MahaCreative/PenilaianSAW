@@ -6,7 +6,7 @@ import { GlobalUrl } from "../../Config/GlobalVar";
 import { tokenUser } from "../../Store/Auth";
 import { useRecoilValue } from "recoil";
 import { Picker } from "@react-native-picker/picker";
-import Octicons from "@expo/vector-icons/Octicons";
+
 import { debounce } from "lodash";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
@@ -38,7 +38,7 @@ export default function RangkingSementara() {
     try {
       const response = await axios.get(
         GlobalUrl +
-          "/api/rangking-sementara-penilaian-kepsek?periode_id=" +
+          "/api/rangking-sementara-penilaian-siswa?periode_id=" +
           query.periode_id,
         {
           headers: {

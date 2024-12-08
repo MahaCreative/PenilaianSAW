@@ -9,7 +9,7 @@ import { ActivityIndicator } from "react-native-paper";
 import Octicons from "@expo/vector-icons/Octicons";
 import Buttons from "../../Components/Buttons";
 import FormCreate from "./Create";
-
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 export default function Periode({ navigation }) {
   const [data, setData] = useState([]);
   const [count, setCount] = useState([]);
@@ -85,8 +85,27 @@ export default function Periode({ navigation }) {
   useEffect(() => {
     fetchData();
   }, []);
+  const selesaikanHandler = async (id) => {
+    try {
+      const response = await axios.get(
+        GlobalUrl + `/api/selesaikan_penilaian/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${useToken}`,
+          },
+        }
+      );
+      Alert.alert("Success", "Periode berhasil diselesaikan");
+    } catch (err) {
+      console.log("====================================");
+      console.log(err.response);
+      console.log("====================================");
+      Alert.alert("Error", "Data gagal proses. Error Code: " + err);
+    }
+  };
+  console.log("====================================");
   console.log(useToken);
-
+  console.log("====================================");
   return (
     <View className="py-3 px-3">
       <View className="py-1 px-2  bg-slate-200 rounded-md">
@@ -100,7 +119,7 @@ export default function Periode({ navigation }) {
         <View className="flex flex-row  py-1 gap-x-1 items-center justify-between w-full  ">
           <View className="bg-pink-500 rounded-md py-3 px-2 text-white w-1/2 flex justify-between flex-row items-center">
             <View className="flex items-center">
-              <MaterialIcons name="date" size={42} color="white" />
+              <FontAwesome5 name="calendar-alt" size={42} color="white" />
               <Text className="text-xs text-white font-light">
                 Total Periode
               </Text>
@@ -114,7 +133,7 @@ export default function Periode({ navigation }) {
           </View>
           <View className="bg-blue-500 rounded-md py-3 px-2 text-white w-1/2 flex justify-between flex-row items-center">
             <View className="flex items-center">
-              <MaterialIcons name="calender" size={42} color="white" />
+              <FontAwesome5 name="calendar-alt" size={42} color="white" />
               <Text className="text-xs text-white font-light">
                 Periode {tahun}
               </Text>
@@ -123,7 +142,9 @@ export default function Periode({ navigation }) {
               <Text className="text-4xl font-bold text-white">
                 {count?.tahun}
               </Text>
-              <Text className="text-xs text-white font-light">Laki-Laki</Text>
+              <Text className="text-xs text-white font-light">
+                Total Periode
+              </Text>
             </View>
           </View>
         </View>
@@ -166,16 +187,18 @@ export default function Periode({ navigation }) {
                 horizontal={true}
                 className="overflow-x-auto flex  flex-row flex-wrap"
               >
-                <Buttons
-                  name={"Delete"}
-                  className={"bg-red-500 mx-1"}
-                  onPress={() => deleteHandler(item.id)}
-                />
+                {item.status !== "selesai" && (
+                  <Buttons
+                    name={"Delete"}
+                    className={"bg-red-500 mx-1"}
+                    onPress={() => deleteHandler(item.id)}
+                  />
+                )}
                 <Buttons
                   name={"Lihat Penilaian Kepsek"}
                   className={"bg-blue-500  mx-1"}
                   onPress={() =>
-                    navigation.navigate("History Penilaian Kepsek", {
+                    navigation.navigate("Penilaian Kepsek", {
                       periodeId: item.id,
                     })
                   }
@@ -184,7 +207,7 @@ export default function Periode({ navigation }) {
                   name={"Lihat Penilaian Siswa"}
                   className={"bg-blue-500  mx-1"}
                   onPress={() =>
-                    navigation.navigate("History Penilaian Kepsek", {
+                    navigation.navigate("Penilaian Siswa", {
                       periodeId: item.id,
                     })
                   }
@@ -194,7 +217,7 @@ export default function Periode({ navigation }) {
                     <Buttons
                       name={"Selesaikan Penilaian Guru"}
                       className={"bg-red-500  mx-1"}
-                      onPress={() => console.log("proses")}
+                      onPress={() => selesaikanHandler(item.id)}
                     />
                   </>
                 )}

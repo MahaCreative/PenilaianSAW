@@ -2,15 +2,15 @@ import axios from "axios";
 import React, { useCallback, useEffect, useState } from "react";
 import { Alert, SafeAreaView, ScrollView, View } from "react-native";
 import { ActivityIndicator, Text } from "react-native-paper";
-import { GlobalUrl } from "../../Config/GlobalVar";
-import { tokenUser } from "../../Store/Auth";
+import { GlobalUrl } from "../../../Config/GlobalVar";
+import { tokenUser } from "../../../Store/Auth";
 import { useRecoilValue } from "recoil";
 import { Picker } from "@react-native-picker/picker";
-import Octicons from "@expo/vector-icons/Octicons";
+
 import { debounce } from "lodash";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import Buttons from "../../Components/Buttons";
+import Buttons from "../../../Components/Buttons";
 export default function RangkingSementara() {
   const useToken = useRecoilValue(tokenUser);
   const [params, setParams] = useState({ periode_id: "" });
@@ -38,7 +38,7 @@ export default function RangkingSementara() {
     try {
       const response = await axios.get(
         GlobalUrl +
-          "/api/rangking-sementara-penilaian-kepsek?periode_id=" +
+          "/api/rangking-sementara-penilaian-siswa?periode_id=" +
           query.periode_id,
         {
           headers: {

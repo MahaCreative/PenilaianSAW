@@ -2,16 +2,16 @@ import axios from "axios";
 import React, { useCallback, useEffect, useState } from "react";
 import { Alert, View } from "react-native";
 import { ActivityIndicator, Text } from "react-native-paper";
-import { GlobalUrl } from "../../Config/GlobalVar";
+import { GlobalUrl } from "../../../Config/GlobalVar";
 import { useRecoilValue } from "recoil";
-import { tokenUser } from "../../Store/Auth";
+import { tokenUser } from "../../../Store/Auth";
 import { Picker } from "@react-native-picker/picker";
 import { debounce } from "lodash";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { Rating } from "react-native-stock-star-rating";
 import Octicons from "@expo/vector-icons/Octicons";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-export default function HistoryPenilaianKepsek() {
+export default function HistoryPenilaianSiswa() {
   const useToken = useRecoilValue(tokenUser);
   const [getRank, setRank] = useState([]);
   const [params, setParams] = useState({ periode_id: "" });
@@ -28,16 +28,16 @@ export default function HistoryPenilaianKepsek() {
 
       setDataPeriode(response.data.periode);
       setParams({ ...params, periode_id: response.data.periode[0].id });
-    } catch (err) {
-      console.log(err.response);
-    }
+    } catch (err) {}
   };
+
   const fetchHistory = async (query) => {
     setLoading(true);
+    console.log(GlobalUrl + `/api/history-penilaian-siswa/${query.periode_id}`);
 
     try {
       const response = await axios.get(
-        GlobalUrl + `/api/history-penilaian-kepsek/${query.periode_id}`,
+        GlobalUrl + `/api/history-penilaian-siswa/${query.periode_id}`,
         {
           headers: {
             Authorization: `Bearer ${useToken}`,
@@ -47,6 +47,7 @@ export default function HistoryPenilaianKepsek() {
       setDataHistory(response.data);
     } catch (err) {
       Alert.alert(
+        "Errors",
         "Gagal mendapatkan data history penilaian kepsek Error Code: " + err
       );
     }
@@ -75,7 +76,6 @@ export default function HistoryPenilaianKepsek() {
       setRank(arr);
     }
   }, [params]);
-  console.log(getRank);
 
   return (
     <View>
@@ -107,7 +107,7 @@ export default function HistoryPenilaianKepsek() {
       ) : (
         <View>
           <View className="w-full px-1 py-1">
-            <View className="w-full bg-green-500 rounded-md py-2 px-1 text-white s flex justify-between flex-row items-end">
+            <View className="w-full bg-green-500 rounded-md py-1 px-1 text-white s flex justify-between flex-row items-end">
               <View className="flex items-center">
                 <FontAwesome6 name="ranking-star" size={40} color="white" />
                 <Text className="text-xs text-white font-light">
@@ -160,7 +160,7 @@ export default function HistoryPenilaianKepsek() {
               <>
                 {dataHistory.map((item, key) => (
                   <View key={key} className="bg-gray-300/50 py-2 px-2 my-1">
-                    <Text className="text-xs text-orange-500 font-medium">{`Penilaian Periode ${item.penilaian_kepesek.periode.bulan}-${item.penilaian_kepesek.periode.tahun}`}</Text>
+                    <Text className="text-xs text-orange-500 font-medium">{`Penilaian Periode ${item.penilaian_siswa.periode.bulan}-${item.penilaian_siswa.periode.tahun}`}</Text>
                     <Text className="text-xs font-medium">{`Guru : ${item.guru.nama} NIP : ${item.guru.nip} `}</Text>
                     <Text className="text-xs font-medium">{`Kriteria : ${item.kriteria.nama_kriteria} `}</Text>
                     <Text className="text-xs font-medium">{`Bobot : ${item.kriteria.bobot_kriteria}%  `}</Text>
