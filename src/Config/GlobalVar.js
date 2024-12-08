@@ -1,3 +1,3 @@
-const GlobalUrl = "http://192.168.169.1/PENILAIAN_GURU/public";
+const GlobalUrl = "https://alchaeriyah.absensijuan.fun/";
 
 export { GlobalUrl };
